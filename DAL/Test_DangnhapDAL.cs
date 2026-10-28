@@ -6,12 +6,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 [TestClass]
 public class Test_DangnhapDAL
 {
-    private readonly DangnhapDAL _dal = new DangnhapDAL(new NullLoggerFactory());
+    private readonly DangnhapDAL dal = new DangnhapDAL(new NullLoggerFactory());
 
     [TestMethod]
     public void LayTaiKhoanCoDieuKien_DungUsernameVaPassword_TraVeThongTinTaiKhoan()
     {
-        var result = _dal.LayTaiKhoanCoDieuKien("tranhodankhoi", "123");
+        var result = dal.LayTaiKhoanCoDieuKien("tranhodankhoi", "123");
 
         Assert.AreEqual("Trần Hồ Đăng Khôi", result.Hovaten);
     }
@@ -19,7 +19,7 @@ public class Test_DangnhapDAL
     [TestMethod]
     public void LayTaiKhoanCoDieuKien_SaiPassword_TraVeDoiTuongRong()
     {
-        var result = _dal.LayTaiKhoanCoDieuKien("tranhodankhoi", "SaiMatKhau");
+        var result = dal.LayTaiKhoanCoDieuKien("tranhodankhoi", "SaiMatKhau");
 
         Assert.AreEqual("", result.Hovaten);
     }
@@ -27,7 +27,7 @@ public class Test_DangnhapDAL
     [TestMethod]
     public void LayTaiKhoanCoDieuKien_SaiUsername_TraVeDoiTuongRong()
     {
-        var result = _dal.LayTaiKhoanCoDieuKien("khong_ton_tai", "123");
+        var result = dal.LayTaiKhoanCoDieuKien("khong_ton_tai", "123");
 
         Assert.AreEqual("", result.Hovaten);
     }
