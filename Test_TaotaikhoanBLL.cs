@@ -1,46 +1,69 @@
-using Microsoft.DiaSymReader;
+using System;
 using Microsoft.Extensions.Logging.Abstractions;
-using StudentManagment.BLL;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StudentManagment.DTO;
-
-namespace StudentManagment.Test;
-
+using StudentManagment.BLL;
 [TestClass]
-public class Test_TaotaikhoanBLL
+public class TaotaikhoanBLLTests
 {
-    private readonly TaotaikhoanBLL _bll = new TaotaikhoanBLL(NullLoggerFactory.Instance);
-    [TestMethod]
-    public void ThemTaiKhoanMoi_ArgumentException()
+    private TaotaikhoanBLL bll;
+
+    [TestInitialize]
+    public void Setup()
     {
-        TaikhoanDTO _dto = new TaikhoanDTO()
+        bll = new TaotaikhoanBLL(NullLoggerFactory.Instance);
+    }
+
+    // ===== ThemTaiKhoanMoi =====
+    [DataTestMethod]
+    [DataRow(null, "user01", "123456")]
+    [DataRow("", "user01", "123456")]
+    [DataRow("Nguyễn Văn A", null, "123456")]
+    [DataRow("Nguyễn Văn A", "", "123456")]
+    [DataRow("Nguyễn Văn A", "user01", null)]
+    [DataRow("Nguyễn Văn A", "user01", "")]
+    public void ThemTaiKhoanMoi_ThieuThongTin_NemArgumentException(string hoVaTen, string username, string password)
+    {
+        var taiKhoan = new TaikhoanDTO
         {
-            Hovaten = "",
-            Username = "",
-            HashedPassword = "",
-            Admin = false
+            Hovaten = hoVaTen,
+            Username = username,
+            HashedPassword = password
         };
-        var ex = Assert.ThrowsExactly<ArgumentException>(() =>
-        _bll.ThemTaiKhoanMoi(_dto));
+
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.ThemTaiKhoanMoi(taiKhoan));
         Assert.AreEqual("Bạn phải nhập đầy đủ thông tin trước khi thêm", ex.Message);
     }
-    [TestMethod]
-   public void SuaTaiKhoan_ArgumentException()
+
+    // ===== SuaTaiKhoan =====
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void SuaTaiKhoan_ThieuUsername_NemArgumentException(string username)
     {
-        TaikhoanDTO _dto = new TaikhoanDTO()
-        {
-            Hovaten = "",
-            Username = "",
-            HashedPassword = "",
-            Admin = false
-        };
-        var ex = Assert.ThrowsExactly<ArgumentException>(() => _bll.SuaTaiKhoan(_dto));
-        Assert.AreEqual("Bạn phải nhập username trước khi sửa",ex.Message);
+        var taiKhoan = new TaikhoanDTO { Username = username, HashedPassword = "123456" };
+
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.SuaTaiKhoan(taiKhoan));
+        Assert.AreEqual("Bạn phải nhập username trước khi sửa", ex.Message);
     }
-    [TestMethod]
-    public void XoaTaiKhoan_ArgumentException()
+
+    // ===== XoaTaiKhoan =====
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void XoaTaiKhoan_ThieuUsername_NemArgumentException(string username)
     {
-        string username = "";
-        var ex = Assert.ThrowsExactly<ArgumentException>(() => _bll.XoaTaiKhoan(username));
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.XoaTaiKhoan(username));
         Assert.AreEqual("Bạn phải nhập username trước khi xóa", ex.Message);
+    }
+
+    // ===== LayDanhSachTaiKhoanTheoDieuKienUsername =====
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void LayDanhSachTaiKhoanTheoDieuKienUsername_ThieuUsername_NemArgumentException(string username)
+    {
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.LayDanhSachTaiKhoanTheoDieuKienUsername(username));
+        Assert.AreEqual("Bạn phải nhập username trước khi tìm kiếm", ex.Message);
     }
 }

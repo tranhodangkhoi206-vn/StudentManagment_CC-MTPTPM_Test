@@ -1,43 +1,70 @@
+using System;
 using Microsoft.Extensions.Logging.Abstractions;
-using StudentManagment.BLL;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using StudentManagment.DTO;
-
-namespace StudentManagment.Test;
-
+using StudentManagment.BLL;
 [TestClass]
-public class Test_QuanlynganhhocBLL
+public class QuanlynganhhocBLLTests
 {
-    readonly QuanlynganhhocBLL _bll = new QuanlynganhhocBLL(NullLoggerFactory.Instance);
-    [TestMethod]
-    public void ThemTaiKhoanMoi_ArgumentException()
+    private QuanlynganhhocBLL bll;
+
+    [TestInitialize]
+    public void Setup()
     {
-        NganhhocDTO _dto = new NganhhocDTO()
+        bll = new QuanlynganhhocBLL(NullLoggerFactory.Instance);
+    }
+
+    // ===== ThemNganhMoi =====
+    [DataTestMethod]
+    [DataRow(null, "CNTT", "Khoa CNTT")]
+    [DataRow("", "CNTT", "Khoa CNTT")]
+    [DataRow("N01", null, "Khoa CNTT")]
+    [DataRow("N01", "", "Khoa CNTT")]
+    [DataRow("N01", "CNTT", null)]
+    [DataRow("N01", "CNTT", "")]
+    public void ThemNganhMoi_ThieuThongTin_NemArgumentException(string maNganh, string tenNganh, string khoaQuanLy)
+    {
+        var nganh = new NganhhocDTO
         {
-            Manganh = "",
-            Tennganh = "",
-            Khoaquanly = ""
+            Manganh = maNganh,
+            Tennganh = tenNganh,
+            Khoaquanly = khoaQuanLy
         };
-        var ex = Assert.ThrowsExactly<ArgumentException>(() =>
-        _bll.ThemNganhMoi(_dto));
+
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.ThemNganhMoi(nganh));
         Assert.AreEqual("Bạn phải nhập đầy đủ thông tin trước khi thêm", ex.Message);
     }
-    [TestMethod]
-    public void SuaTaiKhoan_ArgumentException()
+
+    // ===== SuaThongTinNganhTheoMaNganh =====
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void SuaThongTinNganhTheoMaNganh_ThieuMaNganh_NemArgumentException(string maNganh)
     {
-        NganhhocDTO _dto = new NganhhocDTO()
-        {
-            Manganh = "",
-            Tennganh = "",
-            Khoaquanly = ""
-        };
-        var ex = Assert.ThrowsExactly<ArgumentException>(() => _bll.SuaThongTinNganhTheoMaNganh(_dto));
+        var nganh = new NganhhocDTO { Manganh = maNganh };
+
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.SuaThongTinNganhTheoMaNganh(nganh));
         Assert.AreEqual("Bạn phải nhập mã ngành trước khi sửa", ex.Message);
     }
-    [TestMethod]
-    public void XoaTaiKhoan_ArgumentException()
+
+    // ===== XoaThongTinNganhTheoMaNganh =====
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void XoaThongTinNganhTheoMaNganh_ThieuMaNganh_NemArgumentException(string maNganh)
     {
-        string maNganh = "";
-        var ex = Assert.ThrowsExactly<ArgumentException>(() => _bll.XoaThongTinNganhTheoMaNganh(maNganh));
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.XoaThongTinNganhTheoMaNganh(maNganh));
         Assert.AreEqual("Bạn phải nhập mã ngành trước khi xóa", ex.Message);
+    }
+
+    // ===== TimKiemNganhHoc =====
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void TimKiemNganhHoc_ThieuMaNganh_NemArgumentException(string maNganh)
+    {
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => bll.TimKiemNganhHoc(maNganh));
+        Assert.AreEqual("Bạn phải nhập mã ngành trước khi tìm kiếm", ex.Message);
     }
 }
